@@ -32,22 +32,10 @@ pub fn get_record(connection: &SqliteConnection, record_id: i32) -> Record {
     return record[0].clone();
 }
 
-pub fn show_records() {
+pub fn get_all_records(connection: &SqliteConnection) -> Vec<Record> {
     use self::schema::records::dsl::*;
 
-    let connection = establish_connection();
-    let results = records
-        .load::<models::Record>(&connection)
-        .expect("Error loading records");
-
-        println!("Displaying {} records", results.len());
-        for post in results {
-            println!("----------\n");
-            println!("Id: {}", post.id);
-            println!("Timestamp: {}", post.timestamp);
-            println!("Voltage: {}", post.voltage);
-            println!("----------\n");
-        }
+    records.load::<Record>(connection).expect("Failed to load records")
 }
 
 pub fn create_record<'a>(conn: &SqliteConnection, timestamp: &'a str, voltage: &'a i32) -> usize {
@@ -83,7 +71,17 @@ mod tests {
 
     #[test]
     fn show_records_test() {
-        show_records();
+        let connection = establish_connection();
+        let results = get_all_records(&connection);
+
+        println!("Displaying {} records", results.len());
+        for post in results {
+            println!("----------");
+            println!("Id: {}", post.id);
+            println!("Timestamp: {}", post.timestamp);
+            println!("Voltage: {}", post.voltage);
+            println!("----------");
+        }
     }
 
     #[test]
