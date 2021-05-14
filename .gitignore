@@ -1,2 +1,6 @@
 /target
 Cargo.lock
+
+# Diesel
+db.sqlite
+.env
