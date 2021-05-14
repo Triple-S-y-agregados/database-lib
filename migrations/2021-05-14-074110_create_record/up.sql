@@ -1,5 +1,5 @@
 -- Your SQL goes here
 CREATE TABLE records (
-  id SERIAL PRIMARY KEY,
-  voltage INT NOT NULL
+  id INTEGER PRIMARY KEY NOT NULL,
+  voltage INTEGER NOT NULL
 )
