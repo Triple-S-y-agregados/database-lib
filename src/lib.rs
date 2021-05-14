@@ -5,6 +5,8 @@ extern crate dotenv;
 pub mod schema;
 pub mod models;
 
+use chrono;
+
 use diesel::prelude::*;
 use diesel::sqlite::SqliteConnection;
 use dotenv::dotenv;
@@ -38,8 +40,12 @@ pub fn get_all_records(connection: &SqliteConnection) -> Vec<Record> {
     records.load::<Record>(connection).expect("Failed to load records")
 }
 
-pub fn create_record<'a>(conn: &SqliteConnection, timestamp: &'a str, voltage: &'a i32) -> usize {
+pub fn create_record<'a>(conn: &SqliteConnection, voltage: &'a i32) -> usize {
     use schema::records;
+
+    let local = chrono::Local::now();
+    let datetime = local.format("%Y-%m-%d %H:%M:%S").to_string();
+    let timestamp = datetime.as_str();
 
     let new_record = NewRecord {
         timestamp,
@@ -87,6 +93,6 @@ mod tests {
     #[test]
     fn insert_record_test() {
         let connection = establish_connection();
-        create_record(&connection, "10/10/20", &5);
+        create_record(&connection, &5);
     }
 }
