@@ -14,7 +14,7 @@ use std::env;
 
 use self::models::{Record, NewRecord};
 
-pub fn establish_connection() -> SqliteConnection {
+fn establish_connection() -> SqliteConnection {
     dotenv().ok();
 
     let database_url = env::var("DATABASE_URL")
@@ -23,24 +23,28 @@ pub fn establish_connection() -> SqliteConnection {
         .expect(&format!("Error connecting to {}", database_url))
 }
 
-pub fn get_record(connection: &SqliteConnection, record_id: i32) -> Record {
+pub fn get_record(record_id: i32) -> Record {
     use self::schema::records::dsl::*;
+
+    let connection = establish_connection();
 
     let record = records
         .find(record_id)
-        .load::<Record>(connection)
+        .load::<Record>(&connection)
         .expect("Record with id not found");
 
     return record[0].clone();
 }
 
-pub fn get_all_records(connection: &SqliteConnection) -> Vec<Record> {
+pub fn get_all_records() -> Vec<Record> {
     use self::schema::records::dsl::*;
 
-    records.load::<Record>(connection).expect("Failed to load records")
+    let connection = establish_connection();
+
+    records.load::<Record>(&connection).expect("Failed to load records")
 }
 
-pub fn create_record<'a>(conn: &SqliteConnection, voltage: &'a i32) -> usize {
+pub fn create_record<'a>(voltage: &'a i32) -> usize {
     use schema::records;
 
     let local = chrono::Local::now();
@@ -52,9 +56,11 @@ pub fn create_record<'a>(conn: &SqliteConnection, voltage: &'a i32) -> usize {
         voltage,
     };
 
+    let connection = establish_connection();
+
     diesel::insert_into(records::table)
         .values(&new_record)
-        .execute(conn)
+        .execute(&connection)
         .expect("Error inserting new record.")
 }
 
