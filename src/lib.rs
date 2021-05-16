@@ -42,7 +42,7 @@ pub fn get_last_records(n: i64) -> Vec<Record> {
     let connection = establish_connection();
 
     let record_list = records
-        .order(id)
+        .order(id.desc())
         .limit(n)
         .load::<Record>(&connection)
         .expect("Record with id not found");
