@@ -64,6 +64,13 @@ pub fn create_record<'a>(voltage: &'a i32) -> usize {
         .expect("Error inserting new record.")
 }
 
+pub fn clean() {
+    use schema::records;
+
+    let connection = establish_connection();
+    diesel::delete(records::table).execute(&connection);
+}
+
 #[cfg(test)]
 mod tests {
     use super::*;
@@ -75,16 +82,14 @@ mod tests {
 
     #[test]
     fn get_first_record_test() {
-        let connection = establish_connection();
-        let record = get_record(&connection, 1);
+        let record = get_record(1);
 
         println!("Id: {}, Timestamp: {}, Voltage: {}", record.id, record.timestamp, record.voltage);
     }
 
     #[test]
     fn show_records_test() {
-        let connection = establish_connection();
-        let results = get_all_records(&connection);
+        let results = get_all_records();
 
         println!("Displaying {} records", results.len());
         for post in results {
@@ -98,7 +103,11 @@ mod tests {
 
     #[test]
     fn insert_record_test() {
-        let connection = establish_connection();
-        create_record(&connection, &5);
+        create_record(&5);
+    }
+
+    #[test]
+    fn clean_database_test() {
+        clean();
     }
 }
