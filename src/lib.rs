@@ -36,6 +36,20 @@ pub fn get_record(record_id: i32) -> Record {
     return record[0].clone();
 }
 
+pub fn get_last_records(n: i64) -> Vec<Record> {
+    use self::schema::records::dsl::*;
+
+    let connection = establish_connection();
+
+    let record_list = records
+        .order(id)
+        .limit(n)
+        .load::<Record>(&connection)
+        .expect("Record with id not found");
+
+    return record_list;
+}
+
 pub fn get_all_records() -> Vec<Record> {
     use self::schema::records::dsl::*;
 
