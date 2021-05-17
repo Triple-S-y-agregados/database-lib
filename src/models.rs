@@ -4,12 +4,12 @@ use super::schema::records;
 pub struct Record {
     pub id: i32,
     pub timestamp: String,
-    pub voltage: i32,
+    pub voltage: f32,
 }
 
 #[derive(Insertable)]
 #[table_name="records"]
 pub struct NewRecord<'a> {
     pub timestamp: &'a str,
-    pub voltage: &'a i32,
+    pub voltage: &'a f32,
 }

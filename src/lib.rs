@@ -58,7 +58,7 @@ pub fn get_all_records() -> Vec<Record> {
     records.load::<Record>(&connection).expect("Failed to load records")
 }
 
-pub fn create_record<'a>(voltage: &'a i32) -> usize {
+pub fn create_record<'a>(voltage: &'a f32) -> usize {
     use schema::records;
 
     let local = chrono::Local::now();
