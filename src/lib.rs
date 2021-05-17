@@ -78,11 +78,14 @@ pub fn create_record<'a>(voltage: &'a i32) -> usize {
         .expect("Error inserting new record.")
 }
 
-pub fn clean() {
+pub fn clean() -> Result<(), ()> {
     use schema::records;
 
     let connection = establish_connection();
-    diesel::delete(records::table).execute(&connection);
+    match diesel::delete(records::table).execute(&connection) {
+        Ok(_) => return Ok(()),
+        Err(_) => return Err(()),
+    }
 }
 
 #[cfg(test)]
